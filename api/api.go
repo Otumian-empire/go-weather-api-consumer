@@ -43,12 +43,18 @@ func QueryHandler(responseWriter http.ResponseWriter, request *http.Request) {
 
 	// Check if the city is passed in request query
 	if !request.URL.Query().Has("city") {
-		io.WriteString(responseWriter, "'city' in query is required")
+		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": "%v" }`, "'city' in query is required"))
 		return
 	}
 
 	// get the city
 	city := request.URL.Query().Get("city")
+
+	if len(city) < 1 {
+		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": "%v" }`, "'city' in query is required"))
+		return
+	}
+
 	log.Printf("City: %v\n", city)
 
 	// Get the API_KEY
@@ -62,7 +68,7 @@ func QueryHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	response, err := MakeRequest(url)
 
 	if err != nil {
-		io.WriteString(responseWriter, err.Error())
+		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": "%v" }`, err.Error()))
 		return
 	}
 
@@ -79,12 +85,18 @@ func FormatQueryHandler(responseWriter http.ResponseWriter, request *http.Reques
 
 	// Check if the city is passed in request query
 	if !request.URL.Query().Has("city") {
-		io.WriteString(responseWriter, "'city' in query is required")
+		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": "%v" }`, "'city' in query is required"))
 		return
 	}
 
 	// Get the city
 	city := request.URL.Query().Get("city")
+
+	if len(city) < 1 {
+		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": "%v" }`, "'city' in query is required"))
+		return
+	}
+
 	log.Printf("City: %v\n", city)
 
 	// Get the API_KEY
@@ -98,7 +110,7 @@ func FormatQueryHandler(responseWriter http.ResponseWriter, request *http.Reques
 	response, err := MakeRequest(url)
 
 	if err != nil {
-		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": %v }`, err.Error()))
+		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": "%v" }`, err.Error()))
 		return
 	}
 
@@ -114,7 +126,7 @@ func FormatQueryHandler(responseWriter http.ResponseWriter, request *http.Reques
 
 	// use json unmarshal and struct to bind the body (from MakeRequest)
 	if err := json.Unmarshal(response, &weatherResponse); err != nil {
-		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": %v }`, err.Error()))
+		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": "%v" }`, err.Error()))
 		return
 	}
 
@@ -122,7 +134,7 @@ func FormatQueryHandler(responseWriter http.ResponseWriter, request *http.Reques
 	weatherResponseJSON, err := json.Marshal(weatherResponse)
 
 	if err != nil {
-		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": %v }`, err.Error()))
+		io.WriteString(responseWriter, fmt.Sprintf(`{ "message": "%v" }`, err.Error()))
 		return
 	}
 	/* ends here */
